@@ -1,14 +1,16 @@
 from Crypto.Protocol.KDF import PBKDF2
 from Crypto.PublicKey import RSA
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import serialization
 import getpass
 
 kbits = raw_input('How big exactly? ( must be a multiple of 256 and >= 1024 )\n')
 knumber = raw_input('Number of keys\n')
 
 
-password = getpass.getpass('Enter password part one.\n')
-salt = getpass.getpass('Enter password part two.\n')
-
+password = getpass.getpass('Enter passphrase part one to key generation.\n')
+salt = getpass.getpass('Enter passphrase part two to key generation.\n')
+kpassword = getpass.getpass('Enter password to key encryption. It should be different from previous two.\n')
 
 master_key = PBKDF2(password, salt, count=10000)
 #print('master_key',master_key)
@@ -24,5 +26,16 @@ for i in range(int(knumber)):
     RSA_key = RSA.generate(int(kbits), randfunc=my_rand)
     public_key = RSA_key.publickey().exportKey("PEM") 
     private_key = RSA_key.exportKey("PEM") 
-    print(private_key)
+#    print(private_key)
+    print('Public key:')
     print(public_key)
+
+
+
+    private_key = serialization.load_pem_private_key(private_key,password=None,backend=default_backend())
+    pem = private_key.private_bytes(encoding=serialization.Encoding.PEM,
+                                    format=serialization.PrivateFormat.PKCS8,
+                                    encryption_algorithm=serialization.BestAvailableEncryption(kpassword))
+    print('Private key encrypted with password:')
+    for line in pem.splitlines():
+        print(line)
