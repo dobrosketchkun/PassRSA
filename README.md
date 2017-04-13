@@ -7,6 +7,6 @@ With this script you can generate RSA key pair from passphrase.
 
 Requirements:
 
-python 2.x
-[pycrypto](https://pypi.python.org/pypi/pycrypto)
-[cryptography](https://cryptography.io)
+* python 2.x
+* [pycrypto](https://pypi.python.org/pypi/pycrypto)
+* [cryptography](https://cryptography.io)
