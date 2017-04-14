@@ -7,12 +7,41 @@ import getpass
 kbits = raw_input('How big exactly? ( must be a multiple of 256 and >= 1024 )\n')
 knumber = raw_input('Number of keys\n')
 
+passcheck = True
+saltcheck = True 
+kpasscheck = True
 
-password = getpass.getpass('Enter passphrase part one to key generation.\n')
-salt = getpass.getpass('Enter passphrase part two to key generation.\n')
-kpassword = getpass.getpass('Enter password to key encryption. It should be different from previous two.\n')
+while passcheck:
+    password = getpass.getpass('Enter passphrase part one to key generation.\n')
+    password2 = getpass.getpass('Again.\n')
+    if password2 == password:
+        passcheck = False
+    else:
+        print('Try again, passphrases does not match.\n')
 
-master_key = PBKDF2(password, salt, count=10000)
+while saltcheck:
+    salt = getpass.getpass('Enter passphrase part two to key generation.\n')
+    salt2 = getpass.getpass('Again.\n')
+    if salt2 == salt:
+        saltcheck = False
+    else:
+        print('Try again, passphrases does not match.\n')
+
+while kpasscheck:
+    kpassword = getpass.getpass('Enter password to key encryption. It should be different from previous two.\n')
+    kpassword2 = getpass.getpass('Again.\n')
+
+    if kpassword == password or kpassword == salt:
+        print('Try again, password should be different from previous two.\n')
+    elif kpassword == kpassword2:
+        kpasscheck = False
+    else:
+        print('Try again, passphrases does not match.\n')
+
+
+counts = raw_input('Number of PBKDF2 counts (you should remember it too - from 1 to 10000000 if you have a common computer.)\n')
+
+master_key = PBKDF2(password, salt, count=int(counts))
 #print('master_key',master_key)
 
 def my_rand(n):
